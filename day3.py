@@ -11,4 +11,5 @@ print("\n--- Users Data from API ---\n")
 for user in data[:3]:  # first 3 users
     print(f"Name: {user['name']}")
     print(f"Email: {user['email']}")
+    print(f"Company: {user['company']['name']}")
     print("-" * 30)

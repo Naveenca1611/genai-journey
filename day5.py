@@ -36,12 +36,51 @@ def view_users():
         for user in users:
             print(f"{user['name']} | {user['role']} | {user['age']}")
     except:
-        print(f"\nNo data found.\n")
+        print("\nNo data found.\n")
+
+def search_user():
+    name = input("Enter name to search: ")
+
+    try:
+        with open(filename, "r") as file:
+            users = json.load(file)
+
+        found = False
+
+        for user in users:
+            if user['name'].lower() == name.lower():
+                print(f"\nFound: {user['name']} | {user['role']} | {user['age']}")
+                found = True
+
+        if not found:
+            print("\nUser not found.")
+
+    except:
+        print("\nNo data found.")
+
+def delete_user():
+    name = input("Enter name to delete: ")
+
+    try:
+        with open(filename, "r") as file:
+            users = json.load(file)
+
+        new_users = [user for user in users if user['name'].lower() != name.lower()]
+
+        with open(filename, "w") as file:
+            json.dump(new_users, file, indent=4)
+
+        print("\nUser deleted (if existed).")
+
+    except:
+        print("\nNo data found.")
 
 while True:
     print("\n1. Add Users")
     print("2. View Users")
-    print("3. Exit")
+    print("3. Search User")
+    print("4. Delete User")
+    print("5. Exit")
 
     choice = input("Enter choice: ")
 
@@ -50,7 +89,10 @@ while True:
     elif choice == "2":
         view_users()
     elif choice == "3":
-        print("Exiting...")
+        search_user()
+    elif choice == "4":
+        delete_user()
+    elif choice == "5":
         break
     else:
         print("Invalid choice!")

@@ -1,6 +1,13 @@
 import json
 import requests
 import time
+import logging
+
+logging.basicConfig(
+    filename="app.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 def print_line():
     print("=" * 40)
@@ -37,8 +44,9 @@ def add_user():
     try:
         with open(filename, "r") as file:
             users = json.load(file)
-    except:
-        users = []
+    except Exception as e:
+        logging.error(f"Error adding user: {str(e)}")
+        user = []
 
     users.append(user)
 
@@ -46,6 +54,7 @@ def add_user():
         json.dump(users, file, indent=4)
 
     print("\nUser added successfully\n")
+    logging.info(f"User added: {name}")
 
 
 def view_users():
@@ -60,10 +69,12 @@ def view_users():
 
         print(f"\nTotal Users: {len(users)}")
 
-    except:
-        print("\nNo data found.\n")
+    except Exception as e:
+        logging.error(f"Error reading file: {str(e)}")
 
+    logging.info("Viewed all users")
 
+   
 def search_user():
     name = input("Enter name to search: ")
 
@@ -81,9 +92,10 @@ def search_user():
         if not found:
             print("\nUser not found.")
 
-    except:
-        print("\nNo data found.")
+    except Exception as e:
+        logging.error(f"Error searching user: {str(e)}")
 
+    logging.info(f"User searched: {name}")
 
 def delete_user():
     name = input("Enter name to delete: ")
@@ -99,9 +111,10 @@ def delete_user():
 
         print("\nUser deleted (if existed).")
 
-    except:
-        print("\nNo data found.")
+    except Exception as e:
+        logging.error(f"Error deleting user: {str(e)}")
 
+    logging.info(f"User deleted: {name}")
 
 def fetch_users_api():
     url = "https://jsonplaceholder.typicode.com/users"
@@ -122,6 +135,8 @@ def fetch_users_api():
             print(f"City: {user['address']['city']}")
             print("-" * 30)
 
+        logging.info("API data fetched successfully")
+
         # Ask permission
         permission = input("\nDo you want to save these users? (yes/no): ").strip().lower()
 
@@ -129,7 +144,8 @@ def fetch_users_api():
             try:
                 with open(filename, "r") as file:
                     users = json.load(file)
-            except:
+            except Exception as e:
+                logging.error(f"Error reading file before saving API data: {str(e)}")
                 users = []
 
             # Prevent duplicates & map API data
@@ -151,8 +167,9 @@ def fetch_users_api():
         else:
             print("\nUsers not saved.")
 
-    except:
+    except Exception as e:
         print("\nFailed to fetch data.")
+        logging.error(f"API fetch failed: {str(e)}")
 
 
 # Main loop

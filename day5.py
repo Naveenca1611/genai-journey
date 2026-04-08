@@ -1,6 +1,27 @@
 import json
+import requests
+import time
 
-filename = "user_data.json"
+def print_line():
+    print("=" * 40)
+
+def print_menu():
+    print_line()
+    print("     USER MANAGEMENT SYSTEM")
+    print_line()
+    print("1. Add User")
+    print("2. View Users")
+    print("3. Search User")
+    print("4. Delete User")
+    print("5. Fetch Users from API")
+    print("6. Exit")
+    print_line()
+
+def pause():
+    input("\nPress Enter to continue...")
+
+filename = "users_data.json"
+
 
 def add_user():
     name = input("Enter Name: ")
@@ -26,6 +47,7 @@ def add_user():
 
     print("\nUser added successfully\n")
 
+
 def view_users():
     try:
         with open(filename, "r") as file:
@@ -33,10 +55,14 @@ def view_users():
 
         print("\n--- Stored Users ---\n")
 
-        for user in users:
-            print(f"{user['name']} | {user['role']} | {user['age']}")
+        for i, user in enumerate(users, start=1):
+            print(f"{i}. {user['name']} | {user['role']} | {user['age']}")
+
+        print(f"\nTotal Users: {len(users)}")
+
     except:
         print("\nNo data found.\n")
+
 
 def search_user():
     name = input("Enter name to search: ")
@@ -58,6 +84,7 @@ def search_user():
     except:
         print("\nNo data found.")
 
+
 def delete_user():
     name = input("Enter name to delete: ")
 
@@ -75,25 +102,80 @@ def delete_user():
     except:
         print("\nNo data found.")
 
-while True:
-    print("\n1. Add Users")
-    print("2. View Users")
-    print("3. Search User")
-    print("4. Delete User")
-    print("5. Exit")
 
+def fetch_users_api():
+    url = "https://jsonplaceholder.typicode.com/users"
+
+    print("\nFetching data from API...\n")
+    time.sleep(1)
+
+    try:
+        response = requests.get(url)
+        data = response.json()
+
+        print("\n--- Users from API ---\n")
+
+        for user in data[:3]:
+            print(f"Name: {user['name']}")
+            print(f"Email: {user['email']}")
+            print(f"Company: {user['company']['name']}")
+            print(f"City: {user['address']['city']}")
+            print("-" * 30)
+
+        # Ask permission
+        permission = input("\nDo you want to save these users? (yes/no): ").strip().lower()
+
+        if permission == "yes":
+            try:
+                with open(filename, "r") as file:
+                    users = json.load(file)
+            except:
+                users = []
+
+            # Prevent duplicates & map API data
+            for api_user in data[:3]:
+                exists = any(u['name'] == api_user['name'] for u in users)
+
+                if not exists:
+                    users.append({
+                        "name": api_user['name'],
+                        "role": api_user['company']['name'],
+                        "age": "N/A"
+                    })
+
+            with open(filename, "w") as file:
+                json.dump(users, file, indent=4)
+
+            print("\nUsers saved successfully!")
+
+        else:
+            print("\nUsers not saved.")
+
+    except:
+        print("\nFailed to fetch data.")
+
+
+# Main loop
+while True:
+    print_menu()
     choice = input("Enter choice: ")
+
 
     if choice == "1":
         add_user()
+        pause()
     elif choice == "2":
         view_users()
+        pause()
     elif choice == "3":
         search_user()
+        pause()
     elif choice == "4":
         delete_user()
+        pause()
     elif choice == "5":
+        fetch_users_api()
+        pause()
+    elif choice == "6":
+        print("\nThank you for using the app\n")
         break
-    else:
-        print("Invalid choice!")
-    

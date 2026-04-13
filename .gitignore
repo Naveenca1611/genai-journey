@@ -3,3 +3,4 @@ users_data.json
 venv/
 __pycache__/
 *.pyc
+*.pem

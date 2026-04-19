@@ -1,3 +1,4 @@
+from ai_log_analyzer import analyze_logs
 import json
 import requests
 import time
@@ -22,6 +23,7 @@ def print_menu():
     print("4. Delete User")
     print("5. Fetch Users from API")
     print("6. Exit")
+    print("7. Analyze Logs")
     print_line()
 
 def pause():
@@ -196,3 +198,6 @@ while True:
     elif choice == "6":
         print("\nThank you for using the app\n")
         break
+    elif choice == "7":
+        analyze_logs()
+        pause()

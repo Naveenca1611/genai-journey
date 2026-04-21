@@ -1,4 +1,4 @@
-name: Python App CI
+name: CI PIPELINE DEMO
 
 on:
   push:
